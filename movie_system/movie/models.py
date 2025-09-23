@@ -68,3 +68,6 @@ class Reservation(models.Model):
     seats = models.ForeignKey(Seats, on_delete=models.CASCADE)
 
     booking_status = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('screening', 'seats')
