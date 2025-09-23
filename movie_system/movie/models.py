@@ -4,6 +4,9 @@ class Movie(models.Model):
     title = models.CharField(max_length=100, default="")
     runtime = models.IntegerField(default=0)
     genre = models.CharField(max_length=100, default="")
+
+    #예약이 증가 -> totalAudience 같이 증가
+    #signal.py로 구현 예정
     totalAudience = models.BigIntegerField(default=0)
 
     def __str__(self):
@@ -21,8 +24,6 @@ class Room(models.Model):
 
     number = models.IntegerField(default=0)
     type = models.CharField(max_length=100, default="")
-    row_max = models.IntegerField(default=0)
-    col_max = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ('theater', 'number')
@@ -51,7 +52,9 @@ class Screening(models.Model):
     discount_status = models.BooleanField(default=False)
 
     def discount_price(self):
-        if self.is_discount: return self.price * 0.9
+        if self.is_discount:
+            self.discount_status = True
+            return self.price * 0.9
 
     def is_discount(self):
         start_hour = self.start_time.hour
