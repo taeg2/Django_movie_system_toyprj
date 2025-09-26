@@ -44,6 +44,17 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'todo prj API',
+    'DESCRIPTION': 'todo prj description',
+    'VERSION': '1.0.0',
+}
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
