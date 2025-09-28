@@ -14,7 +14,7 @@ class TheaterSerializer(serializers.ModelSerializer):
 
 
 class SeatsSerializer(serializers.ModelSerializer):
-    is_reserved = serializers.ModelSerializer()
+    is_reserved = serializers.SerializerMethodField()
 
     class Meta:
         model  = Seats

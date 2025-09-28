@@ -48,7 +48,7 @@ class Screening(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     
     price = models.IntegerField(default=0)
-    start_time = models.DateField()
+    start_time = models.DateTimeField(null=True)
     discount_status = models.BooleanField(default=False)
 
     def discount_price(self):
