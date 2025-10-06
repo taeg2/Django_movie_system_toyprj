@@ -12,9 +12,15 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+class TheaterManager(models.Manager):
+    def filterProvince(self, province_name):
+        return self.filter(address__startwith = province_name)
+
 class Theater(models.Model):
     name = models.CharField(max_length=100, default="")
     address = models.CharField(max_length=100, default="")
+
+    objects = TheaterManager()
     
     def __str__(self):
         return self.name
@@ -43,6 +49,21 @@ class Seats(models.Model):
     def __str__(self):
         return f"행: {self.row}, 열: {self.col}"
     
+class ScreeningQuerySet(models.QuerySet):
+    def filter_criteria(self, movie_id = None, theater_id = None, cur_date = None):
+        queryset = self.all()
+
+        if movie_id:
+            queryset = queryset.filter(movie_id = movie_id)
+        
+        if theater_id:
+            queryset = queryset.filter(room__theater_id = theater_id)
+
+        if cur_date:
+            queryset = queryset.filter(start_time__date = cur_date)
+        
+        return queryset
+    
 class Screening(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
@@ -50,6 +71,8 @@ class Screening(models.Model):
     price = models.IntegerField(default=0)
     start_time = models.DateTimeField(null=True)
     discount_status = models.BooleanField(default=False)
+
+    objects = ScreeningQuerySet.as_manager()
 
     def discount_price(self):
         if self.is_discount:

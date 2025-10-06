@@ -22,14 +22,12 @@ class TheaterListView(generics.ListAPIView):
     serializer_class = TheaterSerializer
 
     def get_queryset(self):
-        queryset = self.queryset
-
         province_name = self.request.query_parms.get("province_name", "서울")
 
         if province_name:
-            queryset = queryset.filter(address__startswith=province_name)
+            return Theater.objects.filterProvince(province_name = province_name)
         
-        return queryset
+        return self.queryset
 
 #Screening?movie_id={movie_id}&theater_id={theater_id}
 #view가 filtering 하기 위해 모델의 세부 구현을 이용해서 filtering 중임 -> 리팩터링 필요.
@@ -38,22 +36,17 @@ class ScreeningListView(generics.ListAPIView):
     serializer_class = ScreeningSerializer
 
     def get_queryset(self):
-        query_set = self.queryset
+        parms = self.request.query_parms
 
-        movie_id = self.request.query_parms.get("movie_id")
-        theater_id = self.request.query_parms.get("theater_id")
-        cur_date = self.request.query_parms.get("cur_date")
-
-        if movie_id:
-            query_set = query_set.filter(movie_id = movie_id)
+        movie_id = parms.get("movie_id")
+        theater_id = parms.get("theater_id")
+        cur_date = parms.get("cur_date")
         
-        if theater_id:
-            query_set = query_set.filter(room__theater_id = theater_id)
-        
-        if cur_date:
-            query_set = query_set.filter(cur_date__date = cur_date)
-        
-        return query_set
+        return Screening.objects.filter_criteria(
+            movie_id = movie_id,
+            theater_id = theater_id,
+            cur_date = cur_date
+        )
 
 #api/screening/{screening_id}/room/<int:pk>
 class RoomRetrieveView(generics.RetrieveAPIView):
